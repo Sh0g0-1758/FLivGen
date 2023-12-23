@@ -10,4 +10,4 @@ def create_noise(sample_size, nz):
     """
     return torch.randn(sample_size, nz, 1, 1).to(device)
 
-print(create_noise(64, 128))
+print(create_noise(168,342))
