@@ -247,7 +247,8 @@ imageio.mimsave('./results/generator_images.gif', imgs)
 
 # plot and save the generator and discriminator loss
 plt.figure()
-plt.plot(losses_g, label='Generator loss')
-plt.plot(losses_d, label='Discriminator Loss')
+plt.plot([loss.item() for loss in losses_g], label='Generator loss')
+plt.plot([loss.item() for loss in losses_d], label='Discriminator Loss')
 plt.legend()
 plt.savefig('./results/loss.png')
+plt.show()
