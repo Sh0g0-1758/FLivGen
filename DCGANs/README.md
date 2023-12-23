@@ -23,3 +23,24 @@ The authors of the paper provide a stable way to train DCGAN and most of it boil
 In the generator, we use the ReLU activation function in all the layers except the last one. For the last layer, we use the Tanh activation Function. While For the discriminator, we will use LeakyReLU for all the convolutional layers after applying Batch Normalization. 
 
 Further the authors have provided certain HyperParameters that I will use while implementing the DCGAN.
+
+<hr>
+
+The Phenomenal Performance of DCGANs can be easily seen from the images generated after Epoch 1 and Epoch 25. 
+
+Epoch 1 : 
+
+<img src="./assets/third.png" alt="DCGANs overall">
+<hr>
+
+Epoch 25 : 
+
+<img src="./assets/fourth.png" alt="DCGANs overall">
+<hr>
+
+### Analyzing the Outputs
+
+<img src="./assets/fifth.png" alt="DCGANs overall">
+<hr>
+
+From the above losses after each epoch, we can see that the loss for the generator initially was somewhat high as compared to discriminator. This is expected as in the beginning the generator cannot produce very good fake images. Therefore, the discriminator can easily classify them. As training progresses, the generator loss starts to reduce to anything between 2.5 and 3. Around this time, the discriminator loss increases as it is not longer able to classify the fake images with high probability. 
