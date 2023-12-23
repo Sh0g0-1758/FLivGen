@@ -93,7 +93,7 @@ train_data = datasets.MNIST(
 # loading the data in batches
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 
-# Generator Network
+# Generator Network , a simple Feed Forward Neural Network
 
 
 class Generator(nn.Module):
@@ -115,7 +115,7 @@ class Generator(nn.Module):
         # -1 is given to infer the batch size automatically
         return self.main(x).view(-1, 1, 28, 28)
 
-# Discriminator Network
+# Discriminator Network , a simple Feed Forward Neural Network
 
 
 class Discriminator(nn.Module):
