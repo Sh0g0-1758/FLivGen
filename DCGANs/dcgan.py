@@ -40,7 +40,7 @@ nz = 100  # latent vector size
 beta1 = 0.5  # beta1 value for Adam optimizer
 lr = 0.0002  # learning rate according to paper
 sample_size = 64  # fixed sample size
-epochs = 1  # number of epoch to train
+epochs = 25  # number of epoch to train
 
 # set the computation device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -329,5 +329,5 @@ plt.figure()
 plt.plot(losses_g, label='Generator loss')
 plt.plot(losses_d, label='Discriminator Loss')
 plt.legend()
-plt.savefig('./outputs/loss.png')
-plt.show()
+plt.savefig('./results/loss.png')
+plt.show().detach().numpy()
