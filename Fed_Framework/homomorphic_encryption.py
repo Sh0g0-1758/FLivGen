@@ -72,6 +72,7 @@ def keygen(size, modulus, poly_mod):
         poly_mod: polynomial modulus.
     Returns:
         Public and secret key.
+        b = ((-a * sk)mod (modulus) - e)mod (modulus)
     """
     sk = gen_binary_poly(size)
     a = gen_uniform_poly(size, modulus)
@@ -80,7 +81,8 @@ def keygen(size, modulus, poly_mod):
     return (b, a), sk
 
 def encrypt(pk, size, q, t, poly_mod, pt):
-    """Encrypt an integer.
+    """
+    Encrypt an integer.
     Args:
         pk: public-key.
         size: size of polynomials.
@@ -90,6 +92,13 @@ def encrypt(pk, size, q, t, poly_mod, pt):
         pt: integer to be encrypted.
     Returns:
         Tuple representing a ciphertext.      
+    pk0 is b and pk1 is a
+    u is created by gen_binary_poly(size)
+    e1 and e2 are created by gen_normal_poly(size)
+    δ is the integer division of q over t.
+    m is the constant polynomial representing the plaintext.
+    ct0 = [pk0⋅u+e1+δ⋅m] mod q
+    ct1 = [pk1⋅u+e2] mod q
     """
     # encode the integer into a plaintext polynomial
     m = np.array([pt] + [0] * (size - 1), dtype=np.int64) % t
@@ -111,7 +120,8 @@ def encrypt(pk, size, q, t, poly_mod, pt):
     return (ct0, ct1)
 
 def decrypt(sk, size, q, t, poly_mod, ct):
-    """Decrypt a ciphertext
+    """
+    Decrypt a ciphertext
     Args:
         sk: secret-key.
         size: size of polynomials.
@@ -121,6 +131,13 @@ def decrypt(sk, size, q, t, poly_mod, ct):
         ct: ciphertext.
     Returns:
         Integer representing the plaintext.
+    The main intuition behind decryption is that pk1⋅sk ≈ pk0
+    Now, [ct0 + ct1⋅sk] mod q = [δ⋅m - e⋅u + e1 + e2⋅sk] mod q
+    Now multiplt by 1 / δ and round to the nearest integer. 
+    [⌊1 / δ ⋅ [ct0+ct1⋅sk] mod q ⌉ ] mod t = [ ⌊ [ m + 1 / δ ⋅ errors ] mod q ⌉ ] mod t 
+    So we can decrypt the values if we adjust the error values appropriately.
+    so , errors ≤ q / 2t 
+    as errors depend on the probability distributions, we must choose them carefully. 
     """
     scaled_pt = polyadd(
             polymul(ct[1], sk, q, poly_mod),
