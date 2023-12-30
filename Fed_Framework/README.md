@@ -1,26 +1,32 @@
 # Federated Learning
 
-The FL architecture in it’s basic form consists of a curator or server that sits at its centre and coordinates the training activities
+The FL architecture in it’s basic form consists of a curator or server that sits at its centre and coordinates the training activities. The main idea is to build machine learning models based on data sets that are distributed across multiple devices while preventing data leakage. 
+
+However, In real world scenarios, where data originate from different organizational entities, covariate shift, prior probability shift, concept shift and unbalanced data size are common technical challenges. 
+
+There are 3 types of Federated Learning, namely Horizontal, Vertical and Federated Transfer. 
+
+For the implementation of GANs, Horizontal Federated Learning is an optimal choice because it is quite feasible to assume that different clients will share the same feature space but are different in samples. 
+
+<img src="./assets/third.png" alt="FHE" height=500 width=700>
+<hr>
+
+# Architecture of HFE
+
+In this system, k participants with the same data structure collaboratively learn a machine learning model with the help of a parameter or cloud server. A typical assumption is that the participants are honest whereas the server is honest-but-curious, therefore no leakage of information from any participants to the server is allowed. The training process of such a system usually contain the following four steps:
+• Step 1: participants locally compute training gradients, mask a selection of gradients with, differential privacy and send masked results to server;
+• Step 2: Server performs secure aggregation without learning information about any participant;
+• Step 3: Server send back the aggregated results to participants;
+• Step 4: Participants update their respective model with the decrypted gradients.
+
+<img src="./assets/fourth.png" alt="FHE" height=500 width=700>
+<hr>
 
 HyperLedger --> docs , outdated. Commands given by poeple not working. Googling and all stuff. Kuch steps tak help. No way to connect. Not scalable algorithm. 
 
-# CryptoGraphic functions for private data sharing
+# Attack Vectors
 
-### shamir secret sharing : 
+The architecture of FL is inherently vulnerable to many attacks. The same goes for GANs as well. These include membership inference attacks and full reconstruction. There are inherently many problems with GANs. These include : 
 
-Shamir's Secret Sharing is a cryptographic method that divides a secret into multiple parts, called shares. A minimum number of shares is required to reconstruct the original secret. 
-The system is based on polynomial interpolation and offers a secure way to distribute and safeguard sensitive information. There is an implementation of the same present here. 
-We shall/can use Shamir Secret sharing for consensus among several clients regarding correct updated Params sharing. 
-
-<img src="./assets/second.png" alt="FHE">
-<hr>
-
-
-### homomorphic encryption scheme : 
-This is a cryptographic scheme that allows transfer of params in encrypted form. 
-Allows arithematic operations on them in encrypted form and allows Decryption then to get the updated Params. 
-There is an implementation of the same present here for Polynomial rings.
-The main goal of an HE scheme is to compute on encrypted data but the catch with this scheme is that the amount of computation we can perform will depend on the chosen parameters, and there are no perfect parameters that work for all cases, we must choose them according to our scheme, the security we want to achieve and the computation you want to perform.
-
-<img src="./assets/first.png" alt="FHE">
-<hr>
+1. It is hard to achieve nash equilbrium
+2. it has low dimensional supports
