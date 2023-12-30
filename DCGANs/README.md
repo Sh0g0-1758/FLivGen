@@ -1,13 +1,13 @@
 # DCGANs : Overview and Implementation
 
-<img src="./assets/first.png" alt="DCGANs overall">
+<img src="./assets/first.png" alt="DCGANs overall" height=500 width=700>
 <hr>
 
 DCGANs (Deep Convolutional Generative Adversial Networks) : 
 
 ### Architecture
 
-<img src="./assets/second.png" alt="DCGANs overall">
+<img src="./assets/second.png" alt="DCGANs overall" height=500 width=700>
 <hr>
 
 I find it truly amazing that there are no fully connected layers in the complete architecture of DCGANs. We only have convolutional layers in the network. 
@@ -30,17 +30,17 @@ The Phenomenal Performance of DCGANs can be easily seen from the images generate
 
 Epoch 1 : 
 
-<img src="./assets/third.png" alt="DCGANs overall">
+<img src="./assets/third.png" alt="DCGANs overall" height=500 width=700>
 <hr>
 
 Epoch 25 : 
 
-<img src="./assets/fourth.png" alt="DCGANs overall">
+<img src="./assets/fourth.png" alt="DCGANs overall" height=500 width=700>
 <hr>
 
 ### Analyzing the Outputs
 
-<img src="./assets/fifth.png" alt="DCGANs overall">
+<img src="./assets/fifth.png" alt="DCGANs overall" height=500 width=700>
 <hr>
 
 From the above losses after each epoch, we can see that the loss for the generator initially was somewhat high as compared to discriminator. This is expected as in the beginning the generator cannot produce very good fake images. Therefore, the discriminator can easily classify them. As training progresses, the generator loss starts to reduce to anything between 3 and 4. Around this time, the discriminator loss increases as it is not longer able to classify the fake images with high probability. There is a spike in loss at around 14th Epoch but that is not much relevant as the loss then again stabilizes to between 3 and 4. 
