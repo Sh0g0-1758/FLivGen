@@ -83,9 +83,13 @@ for batch in Dataloader(train_dataset, batch_size=32):
         param.grad = 0  # Reset for next iteration
 ```
 
-One way to go about it is by using the micro batching approach in which we check the gradient of each and every sample in our batch. A much faster approach would be to implement vectorized computation. We can do this making only the highway gradients (the inner layer gradients) worry about per-sample. The exit gradients need not worry about them. We can store the acitvations using the tensor hooks. We shall use two hooks to achieve this. Forward hook and the backward hook. In the forward hook, we store the activations and in the backward_hook, we use the highway grads and the input grads to compute the per sample grads. as we need to find the per sample grads, we can use ```einsum``` which allows us to do that in vectorized form. 
+One way to go about it is by using the micro batching approach in which we check the gradient of each and every sample in our batch. A much faster approach would be to implement vectorized computation. We can do this making only the highway gradients (gradients with respect to activation) worry about per-sample. The exit gradients (gradients with respect to weights) need not worry about them. We can store the acitvations using the tensor hooks. We shall use two hooks to achieve this. Forward hook and the backward hook. In the forward hook, we store the activations and in the backward_hook, we use the highway grads and the input grads to compute the per sample grads. as we need to find the per sample grads, we can use ```einsum``` which allows us to do that in vectorized form. 
 
 here is the output of a rather crude implemention of differential privacy in an image classifier : 
 
 <img src="./assets/sixth.png" alt="FHE" height=500 width=700>
 <hr>
+
+Now lets worry about how to make a GAN differentially private. 
+
+If we were to look at the forward pass of a convolutional layer, we can unfold it into a simple matrix multiplication and now we can simply use einsum for the same. The implementation for the same is in DPGANs folder. 
