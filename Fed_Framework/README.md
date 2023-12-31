@@ -22,11 +22,3 @@ In this system, k participants with the same data structure collaboratively lear
 <img src="./assets/fourth.png" alt="FHE" height=500 width=700>
 <hr>
 
-HyperLedger --> docs , outdated. Commands given by poeple not working. Googling and all stuff. Kuch steps tak help. No way to connect. Not scalable algorithm. 
-
-# Attack Vectors
-
-The architecture of FL is inherently vulnerable to many attacks. The same goes for GANs as well. These include membership inference attacks and full reconstruction. There are inherently many problems with GANs. These include : 
-
-1. It is hard to achieve nash equilbrium
-2. it has low dimensional supports

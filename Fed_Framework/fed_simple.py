@@ -21,7 +21,6 @@ class SimpleNN(nn.Module):
         x = self.fc2(x)
         return x
 
-
 # Create an instance of the model
 model = SimpleNN()
 
@@ -40,7 +39,7 @@ optimizer = optim.SGD(model.parameters(), lr=0.01)
 param_gradients = []
 
 # Train the model
-for epoch in range(100):
+for epoch in range(2):
     # Forward pass
     outputs = model(X)
     loss = criterion(outputs, y)
@@ -49,16 +48,14 @@ for epoch in range(100):
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    result = []
     for param in model.parameters():
-        result.append(json.dumps(param.detach().numpy().tolist()))
-    data = {'params': result}
-    response = requests.post(URL, data=data)
-    response_data = json.loads(response.text)
-    # Access the "result" key and parse its value
-    result_array = json.loads(response_data["result"])
-    for param, new_params in zip(model.parameters(), result_array):
-        param.grad = torch.tensor(new_params)
+        # Ensure that the sizes match before assigning the gradient to the parameter
+        print("######")
+        data = json.dumps(param.detach().numpy().tolist())
+        data = {'params': data}
+        response = requests.post(URL, data=data)
+        print(response)
+        print("######")
     print(f'Epoch {epoch+1}/{100}, Loss: {loss.item()}')
 
 # Make a prediction using the trained model
