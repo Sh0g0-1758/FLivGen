@@ -17,6 +17,10 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from opacus import PrivacyEngine
 from tqdm import tqdm
+import numpy as np
+import json
+import requests
+URL = "http://localhost:6969/api/v1/check"
 
 # Setting a random seed ensures reproducibility, as using the same seed will result in the same sequence of random numbers
 torch.manual_seed(random.randint(1, 10000))
@@ -185,20 +189,8 @@ optimizerG = optim.Adam(netG.parameters(), lr=0.0002, betas=(0.5, 0.999))
 
 for epoch in range(25):
     # To access the gradients
-    generator_gradients = []
-    discriminator_gradients = []
     loss_g = []
     loss_d = []
-
-    # For the Generator
-    generator_hook = netG.main[-2].register_backward_hook(
-        lambda module, grad_input, grad_output: generator_gradients.append(grad_input[0].clone())
-    )
-
-    # For the Discriminator
-    discriminator_hook = netD.main[-2].register_backward_hook(
-        lambda module, grad_input, grad_output: discriminator_gradients.append(grad_input[0].clone())
-    )
 
     data_bar = tqdm(dataloader)
     for i, data in enumerate(data_bar, 0):
@@ -266,21 +258,26 @@ for epoch in range(25):
                 "%s/fake_samples_epoch_%03d.png" % (".", epoch),
                 normalize=True,
             )
-    generator_hook.remove()
-    discriminator_hook.remove()
-    # Access the gradients stored in the lists
-    print("Generator Gradients:", generator_gradients)
-    print("Discriminator Gradients:", discriminator_gradients)
-    # Modify the gradients (example: multiply them by a scalar)
-    modified_generator_gradients = [1.1 * grad for grad in generator_gradients]
-    modified_discriminator_gradients = [0.9 * grad for grad in discriminator_gradients]
+    # Aggregating the gradients of the generator
+    result = []
+    for param in netG.parameters():
+        result.append(json.dumps(param.detach().numpy().tolist()))
+    data = {'params': result}
+    response = requests.post(URL, data=data)
+    response_data = json.loads(response.text)
+    # Access the "result" key and parse its value
+    result_array = json.loads(response_data["result"])
+    for param, new_params in zip(netG.parameters(), result_array):
+        param.grad = torch.tensor(new_params)
 
-    # Update generator parameters with modified gradients
-    for param, grad in zip(netG.main[-2].parameters(), modified_generator_gradients):
-        if grad is not None:
-            param.grad = grad.clone()
-
-    # Update discriminator parameters with modified gradients
-    for param, grad in zip(netD.main[-2].parameters(), modified_discriminator_gradients):
-        if grad is not None:
-            param.grad = grad.clone()
+    # Aggregating the gradients of the Discriminator
+    result = []
+    for param in netD.parameters():
+        result.append(json.dumps(param.detach().numpy().tolist()))
+    data = {'params': result}
+    response = requests.post(URL, data=data)
+    response_data = json.loads(response.text)
+    # Access the "result" key and parse its value
+    result_array = json.loads(response_data["result"])
+    for param, new_params in zip(netD.parameters(), result_array):
+        param.grad = torch.tensor(new_params)
