@@ -3,7 +3,6 @@ const express = require("express");
 const app = express();
 const port = 6969;
 const morgan = require("morgan");
-const { exec } = require('child_process');
 require('dotenv').config();
 const cors = require("cors");
 
