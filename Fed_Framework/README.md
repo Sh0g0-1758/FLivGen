@@ -31,9 +31,9 @@ A daunting task in generating a federated framework was the communication proces
 This posed a dilemma to me. As the parameters for a model will depend on how u define its inner layers, so there is no way to make a common federated framework. Nevertheless, writing the aggregation logic is not a big deal, once u have the params. The Logic I have used is : 
 
 1. **Secure Weighted Averaging:**
-   I implemented a secure weighted averaging mechanism to combine model updates from participating devices. Let ![formula](https://latex.codecogs.com/svg.latex?w_i) represent the weight assigned to the update from device \(i\), and ![formula](https://latex.codecogs.com/svg.latex?U_i) denote the model update from device \(i\). The aggregated update ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}) is computed as follows:
+   I implemented a secure weighted averaging mechanism to combine model updates from participating devices. Let ![formula](https://latex.codecogs.com/svg.latex?w_i){: style="color: white"} represent the weight assigned to the update from device \(i\), and ![formula](https://latex.codecogs.com/svg.latex?U_i) denote the model update from device \(i\). The aggregated update ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}) is computed as follows:
 
-   ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}&space;=&space;\sum_{i}%20w_i%20\cdot%20U_i)
+   ![formula](https://latex.codecogs.com/svg.latex?\bg_white&space;U_{\text{agg}}&space;=&space;\sum_{i}%20w_i%20\cdot%20U_i)
 
 2. **Differential Privacy Preservation:**
    The aggregation logic incorporates differential privacy techniques to protect the privacy of individual device data. The aggregated update is modified to ensure \(\epsilon\)-differential privacy, where \(\epsilon\) is the privacy parameter.
@@ -57,3 +57,26 @@ This posed a dilemma to me. As the parameters for a model will depend on how u d
    To accommodate devices with varying computation capabilities and network latencies, my aggregation logic includes an asynchronous update handling mechanism. Updates are accumulated asynchronously, and the aggregated update is computed at predefined intervals.
 
 Right now, 1st, 2nd and 6th has been implemented. 
+
+# Results 
+
+I have seen significant improvement in the accuracy of the model by just increasing one client to five clients. For now, I have tested the framework on a rather simple neural network only. 
+
+Here is the result of the five clients, each with enhanced accuracy : 
+
+```
+Epoch 100/100, Loss: 0.01075044460594654
+Prediction for input 5: 9.82392406463623
+
+Epoch 100/100, Loss: 0.0038719559088349342
+Prediction for input 5: 10.131973266601562
+
+Epoch 100/100, Loss: 0.010961776599287987
+Prediction for input 5: 9.725300788879395
+
+Epoch 100/100, Loss: 0.018724355846643448
+Prediction for input 5: 9.765052795410156
+
+Epoch 100/100, Loss: 0.006704922765493393
+Prediction for input 5: 9.883999824523926
+```
