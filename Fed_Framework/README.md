@@ -31,9 +31,9 @@ A daunting task in generating a federated framework was the communication proces
 This posed a dilemma to me. As the parameters for a model will depend on how u define its inner layers, so there is no way to make a common federated framework. Nevertheless, writing the aggregation logic is not a big deal, once u have the params. The Logic I have used is : 
 
 1. **Secure Weighted Averaging:**
-   I implemented a secure weighted averaging mechanism to combine model updates from participating devices. Let ![formula](https://latex.codecogs.com/svg.latex?w_i){: style="color: white"} represent the weight assigned to the update from device \(i\), and ![formula](https://latex.codecogs.com/svg.latex?U_i) denote the model update from device \(i\). The aggregated update ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}) is computed as follows:
+   I implemented a secure weighted averaging mechanism to combine model updates from participating devices. Let ![formula](https://latex.codecogs.com/svg.latex?w_i) represent the weight assigned to the update from device \(i\), and ![formula](https://latex.codecogs.com/svg.latex?U_i) denote the model update from device \(i\). The aggregated update ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}) is computed as follows:
 
-   ![formula](https://latex.codecogs.com/svg.latex?\bg_white&space;U_{\text{agg}}&space;=&space;\sum_{i}%20w_i%20\cdot%20U_i)
+   ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}&space;=&space;\sum_{i}%20w_i%20\cdot%20U_i)
 
 2. **Differential Privacy Preservation:**
    The aggregation logic incorporates differential privacy techniques to protect the privacy of individual device data. The aggregated update is modified to ensure \(\epsilon\)-differential privacy, where \(\epsilon\) is the privacy parameter.
