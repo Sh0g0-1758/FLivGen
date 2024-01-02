@@ -1,3 +1,2 @@
-# SyGen
+# FLivGen: Private Synthetic data generation on the FLY
 
-Synthetic Data Generation using a Federated Learning Framework. 
