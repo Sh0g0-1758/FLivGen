@@ -86,3 +86,7 @@ Prediction for input 5: 9.765052795410156
 Epoch 100/100, Loss: 0.006704922765493393
 Prediction for input 5: 9.883999824523926
 ```
+
+<hr>
+
+made with ❤️ by [shogo](https://twitter.com/ShogLoFi)
