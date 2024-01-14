@@ -107,7 +107,7 @@ def weights_init(m):
 
 # generator
 
-
+# Output size=(Input size−1)×stride−2×padding+kernel size
 class Generator(nn.Module):
     def __init__(self, nz):
         super(Generator, self).__init__()
@@ -115,27 +115,32 @@ class Generator(nn.Module):
         self.main = nn.Sequential(
             # We use the sequential container to build the generator network
             # nz will be the input to the first convolution
+            # State size. (nz) x 1 x 1
             nn.ConvTranspose2d(  # First Reverse Convolution layer with stride 1, padding 0
                 nz, 512, kernel_size=4,
                 stride=1, padding=0, bias=False),
             nn.BatchNorm2d(512),
             nn.ReLU(True),
+            # State size. (512) x 4 x 4
             # Rest 4 convolutional layers with stride 2, padding 1
             nn.ConvTranspose2d(
                 512, 256, kernel_size=4,
                 stride=2, padding=1, bias=False),
             nn.BatchNorm2d(256),
             nn.ReLU(True),
+            # State size. (256) x 8 x 8
             nn.ConvTranspose2d(
                 256, 128, kernel_size=4,
                 stride=2, padding=1, bias=False),
             nn.BatchNorm2d(128),
             nn.ReLU(True),
+            # State size. (128) x 16 x 16
             nn.ConvTranspose2d(
                 128, 64, kernel_size=4,
                 stride=2, padding=1, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(True),
+            # State size. (64) x 32 x 32
             nn.ConvTranspose2d(
                 64, 3, kernel_size=4,
                 stride=2, padding=1, bias=False),
@@ -143,6 +148,7 @@ class Generator(nn.Module):
             # 512 output channels and have 3 output channels after the last convolution operation. 512 => 256 =>
             # 128 => 64 => 3. This 3 refers to the three channels (RGB) of the colored images
             nn.Tanh()
+            # The output of the last convolution layer is a 3x64x64 tensor. This tensor is the colored image generated
             # finally a Tanh activation function to get the pixel values in the range [-1,1]
         )
 
@@ -157,33 +163,39 @@ class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
         self.main = nn.Sequential(  # We use the sequential container to build the discriminator network
+            # State size. (3) x 64 x 64
             nn.Conv2d(
                 3, 64, kernel_size=4,
                 stride=2, padding=1, bias=False),
             # 3 input channels for the colored images
             # We will take the hyper-parameters as it is specified in the paper. So We specify the slope of the LeakyReLU as 0.2
             nn.LeakyReLU(0.2, inplace=True),
+            # State size. (64) x 32 x 32
             nn.Conv2d(
                 64, 128, kernel_size=4,
                 stride=2, padding=1, bias=False),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2, inplace=True),
+            # State size. (128) x 16 x 16
             nn.Conv2d(
                 128, 256, kernel_size=4,
                 stride=2, padding=1, bias=False),
             nn.BatchNorm2d(256),
             nn.LeakyReLU(0.2, inplace=True),
+            # State size. (256) x 8 x 8
             nn.Conv2d(
                 256, 512, kernel_size=4,
                 stride=2, padding=1, bias=False),
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.2, inplace=True),
+            # State size. (512) x 4 x 4
             nn.Conv2d(
                 512, 1, kernel_size=4,
                 stride=1, padding=0, bias=False),
             # The output of the last convolution layer is a single number. This number is the probability of the
             # input image being real or fake. We use a Sigmoid activation function to get the probability.
             nn.Sigmoid()
+            #State size. (1) x 1 x 1
         )
 
     def forward(self, input):
