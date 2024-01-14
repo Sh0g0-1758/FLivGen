@@ -3,8 +3,11 @@ The Following is an implementation of a differentially private GAN using Opacus 
 I have Fine tuned the model to get the best results.
 Further I have used the MNIST dataset to train the model.
 Also one important thing to note is that I have used GroupNorm instead of BatchNorm.
-GroupNorm is a normalization technique that is faster and more stable than BatchNorm.
-Also BatchNorm cannot work for differential privacy as it uses the batch statistics.
+GroupNorm is just like batch norm with the difference that now we do the normalization for a specific group of channels.
+BatchNorm cannot work for differential privacy as it uses the batch statistics.
+
+output_size=(input_size - 1 * stride - 2 * padding+dilation * (kernel_size - 1)+output_padding) * stride+kernel_size
+
 '''
 
 import random
@@ -35,7 +38,7 @@ try:
         # A composition of image transformations applied to each sample. In this case, it resizes the image to 64, converts it to a tensor, and normalizes the pixel values to the range [-1, 1] by providing appropriate means and std.
         transform=transforms.Compose(
             [
-                transforms.Resize(64),
+                transforms.Resize(64), # Resize the image to square size of 64 * 64
                 transforms.ToTensor(),
                 transforms.Normalize((0.5,), (0.5,)),
             ]
@@ -59,10 +62,10 @@ dataloader = torch.utils.data.DataLoader(
 device = torch.device("cuda")
 
 # Defining some parameters
-ngpu = 1
-nz = 100
-ngf = 128
-ndf = 128
+ngpu = 1 # number of gpus available. If 0, code will run in CPU mode.
+nz = 100 # size of the latent z vector
+ngf = 128 # size of feature maps in the generator. The depth will be multiples of this.
+ndf = 128 # size of feature maps in the discriminator. The depth will be multiples of this.
 # number of channels in the images. Here I used MNIST dataset which is grayscale, so nc = 1
 nc = 1
 
@@ -74,7 +77,7 @@ def weights_init(m):
     if classname.find("Conv") != -1:
         # normal distribution with mean 0 and standard deviation 0.02
         m.weight.data.normal_(0.0, 0.02)
-    elif classname.find("BatchNorm") != -1:
+    elif classname.find("GroupNorm") != -1:
         # normal distribution with mean 1 and standard deviation 0.02
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
@@ -90,26 +93,27 @@ class Generator(nn.Module):
         self.main = nn.Sequential(
             # input is Z, going into a convolution
             # nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding)
+            # State size. (nz) x 1 x 1
             nn.ConvTranspose2d(nz, ngf * 8, 4, 1, 0, bias=False),
             # nn.GroupNorm(num_groups, num_in_channels) , here num_in_channels = ngf * 8 = num_out_channels of the previous layer
-            nn.GroupNorm(min(32, ndf * 8), ndf * 8),
+            nn.GroupNorm(min(32, ndf * 8), ndf * 8), # min(32, ndf * 8) is used to avoid the error of num_groups > num_channels and ndf*8 = number of channels
             nn.ReLU(True),
-            # state size. (ngf*8) x 4 x 4
+            # State size. (ngf*8) x 4 x 4
             nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False),
             nn.GroupNorm(min(32, ndf * 4), ndf * 4),
             nn.ReLU(True),
-            # state size. (ngf*4) x 8 x 8
+            # State size. (ngf*4) x 8 x 8
             nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
             nn.GroupNorm(min(32, ndf * 2), ndf * 2),
             nn.ReLU(True),
-            # state size. (ngf*2) x 16 x 16
+            # State size. (ngf*2) x 16 x 16
             nn.ConvTranspose2d(ngf * 2, ngf, 4, 2, 1, bias=False),
             nn.GroupNorm(min(32, ndf), ndf),
             nn.ReLU(True),
-            # state size. (ngf) x 32 x 32
+            # State size. (ngf) x 32 x 32
             nn.ConvTranspose2d(ngf, nc, 4, 2, 1, bias=False),
             nn.Tanh()
-            # state size. (nc) x 64 x 64
+            # State size. (nc) x 64 x 64
         )
 
     def forward(self, input):
@@ -142,7 +146,7 @@ class Discriminator(nn.Module):
             # state size. (ndf*2) x 16 x 16
             nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
             nn.GroupNorm(min(32, ndf * 4), ndf * 4),
-            nn.LeakyReLU(0.2, inplace=True),
+            nn.LeakyReLU(0.2, inplace=True), # inplace means to modify the input tensor to get the new tensor
             # state size. (ndf*4) x 8 x 8
             nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
             nn.GroupNorm(min(32, ndf * 8), ndf * 8),
@@ -216,7 +220,7 @@ for epoch in range(25):
         output = netD(fake.detach())
         errD_fake = criterion(output, label_fake)
 
-        # below, you actually have two backward passes happening under the hood
+        # below, we actually have two backward passes happening under the hood
         # which opacus happens to treat as a recursive network
         # and therefore doesn't add extra noise for the fake samples
         # noise for fake samples would be unnecesary to preserve privacy

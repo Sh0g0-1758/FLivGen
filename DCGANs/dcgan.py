@@ -115,7 +115,7 @@ class Generator(nn.Module):
         self.main = nn.Sequential(
             # We use the sequential container to build the generator network
             # nz will be the input to the first convolution
-            nn.ConvTranspose2d(  # First Convolution layer with stride 1, padding 0
+            nn.ConvTranspose2d(  # First Reverse Convolution layer with stride 1, padding 0
                 nz, 512, kernel_size=4,
                 stride=1, padding=0, bias=False),
             nn.BatchNorm2d(512),
@@ -139,7 +139,7 @@ class Generator(nn.Module):
             nn.ConvTranspose2d(
                 64, 3, kernel_size=4,
                 stride=2, padding=1, bias=False),
-            # With each subsequent convolution operation, we keep on reducing the output channels. We start from
+            # With each subsequent Reverse convolution operation, we keep on reducing the output channels. We start from
             # 512 output channels and have 3 output channels after the last convolution operation. 512 => 256 =>
             # 128 => 64 => 3. This 3 refers to the three channels (RGB) of the colored images
             nn.Tanh()
@@ -245,16 +245,16 @@ losses_d = []  # to store discriminator loss after each epoch
 
 
 def train_discriminator(optimizer, data_real, data_fake):
-    b_size = data_real.size(0)
+    b_size = data_real.size(0) # get the batch size
     # get the real label vector
     real_label = label_real(b_size)
-    real_label = real_label.squeeze()
+    real_label = real_label.squeeze() # remove an extra dimension
     # get the fake label vector
     fake_label = label_fake(b_size)
     fake_label = fake_label.squeeze()
     optimizer.zero_grad()
     # get the outputs by doing real data forward pass
-    output_real = discriminator(data_real).view(-1)
+    output_real = discriminator(data_real).view(-1) # reshape to a one dimensional vector, -1 is used to infer the size along that dimension. So, -1 here is equivalent to 1*512*4*4
     loss_real = criterion(output_real, real_label)
     # get the outputs by doing fake data forward pass
     output_fake = discriminator(data_fake)

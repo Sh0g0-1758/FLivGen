@@ -20,11 +20,12 @@ import torch
 import warnings
 warnings.simplefilter("ignore")
 
+# One common technique is to clip the gradients during training, and max_grad_norm is the threshold used for this purpose.
 MAX_GRAD_NORM = 1.2  # The maximum L2 norm of per-sample gradients
 EPSILON = 50.0
 DELTA = 1e-5  # it should be set to be less than the inverse of the size of the training dataset
 EPOCHS = 20
-LR = 1e-3
+LR = 1e-3 # Learning rate
 BATCH_SIZE = 512
 MAX_PHYSICAL_BATCH_SIZE = 128
 

@@ -112,7 +112,7 @@ class Generator(nn.Module):
         )  # LeakyRELu [max(0.1x,x)] introduce non-linearities to capture complex patterns while Tanh ensures that the generator's output is within a suitable range for image data
 
     def forward(self, x):
-        # -1 is given to infer the batch size automatically
+        # -1 is given to infer the batch size automatically. 1 for grayscale, and the 28*28 is the size of the image.
         return self.main(x).view(-1, 1, 28, 28)
 
 # Discriminator Network , a simple Feed Forward Neural Network
