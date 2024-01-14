@@ -4,6 +4,8 @@
 We will be using the CIFAR-10 dataset to train the DCGAN. The dataset consists of 60000 32x32 colour images in
 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. We will be using
 the training images to train the DCGAN.
+
+Also taking all the hyper-parameters as it is specified in the paper. So we will be using a batch size of 128,a LeakyReLU with a slope of 0.2, a tanh activation function for the generator output, a Sigmoid activation function for the discriminator output, a learning rate of 0.0002, a beta1 value of 0.5, and a latent vector size of 100.
 """
 
 # Importing the libraries
@@ -35,9 +37,9 @@ class colors:
 
 # learning parameters / configurations according to paper
 image_size = 64  # we need to resize image to 64x64
-batch_size = 128
+batch_size = 128 # given in the paper
 nz = 100  # latent vector size
-beta1 = 0.5  # beta1 value for Adam optimizer
+beta1 = 0.5  # beta1 value for Adam optimizer, basically momentum parameter
 lr = 0.0002  # learning rate according to paper
 sample_size = 64  # fixed sample size
 epochs = 25  # number of epoch to train

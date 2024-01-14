@@ -40,8 +40,8 @@ def coeff(t, secret):
     return coeff
 
 
-def generate_shares(n, m, secret):
-    coefficients = coeff(m, secret)
+def generate_shares(n, t, secret):
+    coefficients = coeff(t, secret)
     shares = []
 
     for i in range(1, n+1):

@@ -2,7 +2,7 @@
 
 The FL architecture in its basic form consists of a curator or server that sits at its center and coordinates the training activities. The main idea is to build machine learning models based on data sets that are distributed across multiple devices while preventing data leakage. 
 
-However, In real-world scenarios, where data originate from different organizational entities, covariate shift, prior probability shift, concept shift and unbalanced data size are common technical challenges. 
+However, In real-world scenarios, where data originate from different organizational entities, covariate shift is common technical challenges. 
 
 There are 3 types of Federated Learning, namely Horizontal, Vertical and Federated Transfer. 
 
@@ -17,7 +17,7 @@ In this system, k participants with the same data structure collaboratively lear
 • Step 1: participants locally compute training gradients, mask a selection of gradients with, differential privacy and send masked results to the server; 
 • Step 2: Server performs secure aggregation without learning information about any participant;
 • Step 3: Server send back the aggregated results to participants;
-• Step 4: Participants update their respective model with the decrypted gradients.
+• Step 4: Participants update their respective model with the aggregated gradients.
 
 <img src="./assets/fourth.png" alt="FHE" height=500 width=700>
 <hr>
@@ -39,24 +39,19 @@ This posed a dilemma to me. As the parameters for a model will depend on how u d
    The aggregation logic incorporates differential privacy techniques to protect the privacy of individual device data. The aggregated update is modified to ensure \(\epsilon\)-differential privacy, where \(\epsilon\) is the privacy parameter.
 
 3. **Adaptive Learning Rate Adjustment:**
-   My approach dynamically adjusts learning rates during the aggregation process based on the historical performance of individual devices. The learning rate ![formula](https://latex.codecogs.com/svg.latex?\alpha_i) for device \(i\) is updated based on a performance metric, and the aggregated update is obtained as:
+   dynamically adjusts learning rates during the aggregation process based on the historical performance of individual devices. The learning rate ![formula](https://latex.codecogs.com/svg.latex?\alpha_i) for device \(i\) is updated based on a performance metric, and the aggregated update is obtained as:
 
    ![formula](https://latex.codecogs.com/svg.latex?U_{\text{agg}}&space;=&space;\sum_{i}%20\alpha_i%20\cdot%20U_i)
 
 4. **Gradient Clipping and Norm Regularization:**
-   To mitigate potential issues related to extreme gradients, I apply gradient clipping and norm regularization during the aggregation. Let ![formula](https://latex.codecogs.com/svg.latex?g_i) represent the gradient from device \(i\), and the aggregated gradient ![formula](https://latex.codecogs.com/svg.latex?g_{\text{agg}}) is computed as:
+   To mitigate potential issues related to extreme gradients, apply gradient clipping and norm regularization during the aggregation. Let ![formula](https://latex.codecogs.com/svg.latex?g_i) represent the gradient from device \(i\), and the aggregated gradient ![formula](https://latex.codecogs.com/svg.latex?g_{\text{agg}}) is computed as:
 
    ![formula](https://latex.codecogs.com/svg.latex?g_%7B%5Ctext%7Bagg%7D%7D&space;=&space;%5Ctext%7BClip%7D%20%5Cleft(%20%5Csum_%7Bi%7D%20g_i,%20%5Ctext%7Bmax%5C_norm%7D%20%5Cright))
 
-5. **Ensemble-based Fusion:**
-   Leveraging ensemble learning principles, my aggregation logic incorporates a fusion technique that combines multiple models to improve overall predictive accuracy. The ensemble-based aggregated model ![formula](https://latex.codecogs.com/svg.latex?M_{\text{agg}}) is obtained through a weighted combination of individual models:
-
-   ![formula](https://latex.codecogs.com/svg.latex?M_{\text{agg}}&space;=&space;\sum_{i}%20\beta_i%20\cdot%20M_i)
-
-6. **Asynchronous Update Handling:**
+5. **Asynchronous Update Handling:**
    To accommodate devices with varying computation capabilities and network latencies, my aggregation logic includes an asynchronous update handling mechanism. Updates are accumulated asynchronously, and the aggregated update is computed at predefined intervals.
 
-Right now, 1st, 2nd and 6th has been implemented. 
+Right now, 1st, 2nd and 5th has been implemented. 
 
 # Results 
 

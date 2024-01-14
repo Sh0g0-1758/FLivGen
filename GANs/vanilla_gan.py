@@ -170,7 +170,7 @@ def train_discriminator(optimizer, data_real, data_fake):
     b_size = data_real.size(0)
     real_label = label_real(b_size)  # real label is 1
     fake_label = label_fake(b_size)  # fake label is 0
-    optimizer.zero_grad()  # setting the gradient to zero
+    optimizer.zero_grad()  # so as to clear the gradients from previous training iteration
     # forward pass through the discriminator network
     output_real = discriminator(data_real)
     loss_real = criterion(output_real, real_label)  # calculating the loss
@@ -188,7 +188,7 @@ def train_discriminator(optimizer, data_real, data_fake):
 def train_generator(optimizer, data_fake):
     b_size = data_fake.size(0)  # getting the batch size
     real_label = label_real(b_size)  # real label is 1
-    optimizer.zero_grad()  # setting the gradient to zero
+    optimizer.zero_grad()  # so as to clear the gradients from previous training iteration
     # forward pass through the discriminator network
     output = discriminator(data_fake)
     loss = criterion(output, real_label)  # calculating the loss

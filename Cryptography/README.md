@@ -34,7 +34,7 @@ Mathematically, this means this :
 A randomized mechanism M is (ϵ,δ)-differential private if any output set S and
 any neighboring databases D and D′ satisfy the followings
 
-Pr{M(d) ∈ S} ≤ exp(ϵ)Pr{ M(d′) ∈ S}
+Pr{M(d) ∈ S} ≤ exp(ϵ)Pr{ M(d′) ∈ S} + δ
 
 where d is the original dataset and d' is the new dataset. Smaller the value of Ɛ, stronger the privacy guarantees, with ϵ = 0 representing perfect privacy. A nice property of DP mechanism, which we state here without proof, is that any post-processing applied to a DP mechanism is automatically DP. 
 
@@ -43,7 +43,7 @@ The core idea is to add noise onto training data, which would be added to model 
 There are two choices for noises. We can add Laplacian noise or gaussian noise. However, the use of Laplacian noise is preferred since the models are much less distorted compared to gaussian noise. 
 
 To protect sensitive data in training a Generative Adversarial Network (GAN), the standard approach is to use differentially private (DP) stochastic gradient descent method in which controlled noise is added to the gradients.In Stochastic gradient method, when we update the weights after gradient by backpropagation, we only do it for one sample instead of all the samples present. However, this method called DPSGD is difficult to train because this complicated GAN does not necessarily converge to a noisy equilbrium, resulting in mode collapse
-and/or poor synthetic sample quality. In the paper on DPGANs, they used WGANs. So lets have a basic overview of what they are. 
+and/or poor synthetic sample quality. In the paper on DPGANs, they used WGANs. But we wont delve into it. 
 
 we can implement DPSGD method by simply adding noise to the optimiser in pytorch since it is made to look at the parameter gradients. So it all boils down to how much noise should we be adding. Now we just need to add enough noise to hide the largest possible gradient. However, it is possible that the gradients are unbounded. To bound them, we can just clip the gradients by scaling it down to C. we call this C as the clipping threshold. 
 
