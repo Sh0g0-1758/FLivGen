@@ -10,7 +10,19 @@ DCGANs (Deep Convolutional Generative Adversial Networks) :
 <img src="./assets/second.png" alt="DCGANs overall" height=500 width=700>
 <hr>
 
-I find it truly amazing that there are no fully connected layers in the complete architecture of DCGANs. We only have convolutional layers in the network. 
+Architecture guidelines for stable Deep Convolutional GANs : 
+
+• Replace any pooling layers with strided convolutions (discriminator) and fractional-strided convolutions (generator).
+
+• Use batchnorm in both the generator and the discriminator.
+
+• Remove fully connected hidden layers for deeper architectures.
+
+• Use ReLU activation in generator for all layers except for the output, which uses Tanh.
+
+• Use LeakyReLU activation in the discriminator for all layers
+
+I find it a little stange that there are no fully connected layers in the complete architecture of DCGANs. We only have convolutional layers in the network. 
 
 The generator network in the DCGAN model is structured like this : 
 
